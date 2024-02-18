@@ -1,0 +1,184 @@
+\documentclass[a4paper]{article}
+\usepackage{geometry}
+\usepackage{tikz}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+% Import tikz libraries
+\usetikzlibrary{
+	calc,
+	decorations.pathreplacing,
+	fit,
+	tikzmark,
+}
+
+\newcounter{tmkcount}
+
+% Template
+\tikzset{
+	% to only remember within a single tikz
+	use tikzmark/.style={
+		remember picture,
+		xcenter around={0,0}{0,0},
+		execute at end picture={
+			\stepcounter{tmkcount}
+		},
+	},
+	tikzmark suffix={-\thetmkcount},
+	% to center the image
+	xcenter around/.style 2 args={execute at end picture={%
+			\useasboundingbox{} let \p0 = (current bounding box.south west), \p1 = (current bounding box.north east),
+			\p2 = (#1), \p3 = (#2)
+			in
+			({min (\x2 + \x3 - \x1,\x0)},\y0) rectangle ({max (\x3 + \x2 - \x0,\x1)},\y1);% chktex 8
+	}},
+	% node style
+	every node/.style={
+		above,
+		inner sep=0.1,
+		minimum size=0.5cm,
+	},
+	% commandline
+	pics/command-line/.style={
+		code = {
+			\node[] (text) at (0,0) {
+				\Huge{\texttt{%
+						\$ %
+						\subnode{begin-line}{c}p %
+						\subnode{begin-word}{m}onf\subnode{prev-char}{i}\subnode{cursor}{c}\subnode{next-char}{h}ie\subnode{end-word}{r} %
+						\subnode{begin-next-word}{d}ir\subnode{end-line}{/}
+				}}
+			};
+			% square around middle
+			\node[rectangle, draw, fit = (cursor)] {};
+		}
+	},
+	% moving arrows
+	pics/move/.style n args={6}{
+		code = {
+			% arrows (moving)
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=3cm]
+				node [pos=.7, above] {\textit{#1}} (begin-line);
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=1.5cm]
+				node [pos=.7, above] {\textit{#2}} (begin-word);
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=.4cm]
+				node [pos=1, above left] {\textit{#3}} (prev-char);
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=.4cm]
+				node [pos=1, above right] {\textit{#4}} (next-char);
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=1.5cm]
+				node [pos=.7, above] {\textit{#5}} (end-word);
+			\draw[-stealth,thick] (cursor) to [out=90,in=90,distance=3cm]
+				node [pos=.7, above] (top-note) {\textit{#6}} (end-line);
+			
+			% curly brace (moving)
+			\draw[
+				decorate,
+				decoration = {
+					amplitude=10pt,
+					brace,
+					mirror,
+				},
+				thick,
+			]
+			let
+				\p{bottom} = (cursor.north),
+				\p{top} = (top-note.north),
+				\p{right} = (end-line.east),
+			in
+				(\x{right}, \y{bottom}) -- (\x{right}, \y{top})% chktex 8
+				node[midway,right=15pt] {\LARGE \textbf{Moving}};
+		}
+	},
+	% erasing arrows
+	pics/erase/.style n args={4}{
+		code = {
+			% arrows (erasing)
+			\draw[-stealth,thick]
+			let
+				\p{center} = (cursor.center),
+				\p{target} = (begin-line.center),
+			in
+				(\x{center}-2, -.8) to node [below,midway] (\x{center}, -1) {\textit{#1}} (\x{target}, -.8);
+			
+			\draw[-stealth,thick]
+			let
+				\p{center} = (cursor.center),
+				\p{target} = (begin-word.center),
+			in
+				(\x{center}-2, -.2) to node [below,midway] (\x{center}, -1) {\textit{#2}} (\x{target}, -.2);
+			
+			\draw[-stealth,thick]
+			let
+				\p{center} = (cursor.center),
+				\p{target} = (begin-next-word.west),
+			in
+				(\x{center} + 2, -.2) to node [below,midway] (\x{center}, -1) {\textit{#3}} (\x{target}, -.2);
+			
+			\draw[-stealth,thick]
+			let
+				\p{center} = (cursor.center),
+				\p{target} = (end-line.center),
+			in
+				(\x{center} + 2, -.8) to node [below,midway] (\x{center}, -1) {\textit{#4}} (\x{target}, -.8);
+			
+			% curly brace (erasing)
+			\draw[
+				decorate,
+				decoration = {
+					amplitude=10pt,
+					brace,
+				},
+				thick,
+			]
+			let
+				\p{bottom} = (cursor.south),
+				\p{top} = (0,-1.3),
+				\p{right} = (end-line.east),
+			in
+				(\x{right}, \y{bottom}) -- (\x{right}, \y{top})% chktex 8
+				node[midway,right=15pt] {\LARGE \textbf{Erasing}};
+		}
+	},
+	% clear line
+	pics/clear-line/.style args={#1}{
+		code = {
+			\draw[stealth-stealth,thick]
+			let
+				\p{start} = (begin-line.center),
+				\p{target} = (end-line.center),
+			in
+				(\x{start}, -1.4) to node [below,midway] (\x{start}, -1) {\textit{#1}} (\x{target}, -1.4);
+		}
+	}
+}
+
+\begin{document}
+	\section*{Common}
+	\begin{tikzpicture}[use tikzmark]
+		\pic {command-line};
+		\pic {move={Home}{Ctrl+←}{←}{→}{Ctrl+→}{End}};
+		\pic {erase={none}{Ctrl+Del}{Ctrl+Backspace}{none}};
+	\end{tikzpicture}
+
+	\section*{Shell}
+	% inspired by: https://clementc.github.io/blog/2018/01/25/moving_cli/
+	\begin{tikzpicture}[use tikzmark]
+		\pic {command-line};
+		\pic {move={Ctrl+A}{Alt+B}{Ctrl+B}{Ctrl+F}{Alt+F}{Ctrl+E}};
+		\pic {erase={Ctrl+U}{Ctrl+W}{Alt+D}{Ctrl+K}};
+		\pic {clear-line={Alt+R}};
+	\end{tikzpicture}
+
+	\section*{Vim}
+	% inspired by: https://members.loria.fr/lnussbaum/asrall/olc-tools.pdf
+	\begin{tikzpicture}[use tikzmark]
+		\pic {command-line};
+		\pic {move={0}{b/B/↑+←}{h}{l}{w/W/↑+→}{\$}};
+		\pic {erase={d0}{db/dB}{dw/dW}{d\$}};
+		\pic {clear-line={dd}};
+	\end{tikzpicture}
+\end{document}
