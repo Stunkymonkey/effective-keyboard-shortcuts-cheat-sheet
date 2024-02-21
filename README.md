@@ -1,7 +1,7 @@
-# unix-cheat-sheet
+# Effective Keyboard Shortcuts Cheat Sheet
 
-![Latex](https://github.com/Stunkymonkey/unix-cheat-sheet/actions/workflows/latex.yml/badge.svg)
-[![Super-Linter](https://github.com/Stunkymonkey/unix-cheat-sheet/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+![Latex](https://github.com/Stunkymonkey/effective-keyboard-shortcuts-cheat-sheet/actions/workflows/latex.yml/badge.svg)
+[![Super-Linter](https://github.com/Stunkymonkey/effective-keyboard-shortcuts-cheat-sheet/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 ![Thumbnail](thumbnail.png)
 
