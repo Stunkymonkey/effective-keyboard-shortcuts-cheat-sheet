@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-      statuses: write  # To report GitHub Actions status checks
+      statuses: write # To report GitHub Actions status checks
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6

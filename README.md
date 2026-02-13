@@ -6,7 +6,7 @@
 ![Thumbnail](thumbnail.png)
 
 - Common: keyboard shortcuts that usually work everywhere.
-- Shell (bash): Explore time-saving keyboard shortcuts for Bash, the Unix shell and command language.
+- Shell (Bash): Explore time-saving keyboard shortcuts for Bash, the Unix shell and command language.
 - Vim: Discover essential keyboard shortcuts to enhance your productivity in Vim, the versatile text editor.
 
 ## Download PDF Version
